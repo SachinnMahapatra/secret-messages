@@ -29,7 +29,7 @@ const SecretMessage = () => {
     if (!message.trim()) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/message/send", {
+      const response = await fetch("https://mystmessage.onrender.com/api/message/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

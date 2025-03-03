@@ -18,7 +18,7 @@ const MessageList = () => {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/user/${id}/messages`); // ✅ Correct API URL
+      const response = await fetch(`https://mystmessage.onrender.com/api/user/${id}/messages`); // ✅ Correct API URL
       const data = await response.json();
 
       if (data.success) {

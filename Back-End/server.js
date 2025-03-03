@@ -11,7 +11,9 @@ const app = express();
 
 // **Middleware**
 app.use(express.json()); // JSON support
-app.use(cors()); // Enable CORS
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://mystmessage.onrender.com']
+}));
 
 // **Database Connection**
 connectDB();
@@ -28,5 +30,5 @@ app.get("/", (req, res) => {
 // **Start Server**
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  // console.log(`Server running on port ${PORT}`);
 });
