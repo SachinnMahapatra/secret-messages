@@ -18,9 +18,26 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-200">
-      <div className="w-full bg-white/10 backdrop-blur-sm p-4 mb-6 rounded-lg mt-4">
-        <div className="h-16 flex items-center justify-center border-2 border-dashed border-white/30 rounded-md">
-          <p className="text-white/70">Ad Space (Top Banner)</p>
+      <div >
+        <div >
+          
+            <script type="text/javascript">
+              atOptions ={" "}
+              {`
+		'key' : '19a5aac66eca7386fdc01441d5f1c039',
+		'format' : 'iframe',
+		'height' : 90,
+		'width' : 728,
+		'params' : {}
+	`}
+              ;
+            </script>
+            <script
+              type="text/javascript"
+              src="//www.highperformanceformat.com/19a5aac66eca7386fdc01441d5f1c039/invoke.js"
+            ></script>
+           
+          
         </div>
       </div>
 
@@ -29,7 +46,8 @@ const Home = () => {
           Welcome to Secret Message
         </h1>
         <p className="text-lg mb-8 max-w-md drop-shadow-md">
-          Create your unique secret message link and share it anonymously with friends!
+          Create your unique secret message link and share it anonymously with
+          friends!
         </p>
         <button
           className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105 mb-4"
@@ -51,7 +69,23 @@ const Home = () => {
 
       <footer className="w-full py-4 text-center text-black/70 text-sm">
         <p>© 2025 MystMessage . All rights reserved.</p>
+        <script type="text/javascript">
+              atOptions ={" "}
+              {`
+		'key' : '19a5aac66eca7386fdc01441d5f1c039',
+		'format' : 'iframe',
+		'height' : 90,
+		'width' : 728,
+		'params' : {}
+	`}
+              ;
+            </script>
+            <script
+              type="text/javascript"
+              src="//www.highperformanceformat.com/19a5aac66eca7386fdc01441d5f1c039/invoke.js"
+            ></script>
       </footer>
+      <script type='text/javascript' src='//pl26015944.effectiveratecpm.com/2f/d2/6d/2fd26ddd6ce90cbf201ac3837d5395b7.js'></script>
     </div>
   );
 };
