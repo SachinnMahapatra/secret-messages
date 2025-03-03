@@ -59,12 +59,23 @@ const CreateLink = () => {
       setTimeout(() => setCopied(false), 3000);
     }
   };
+  const shareMessages = [
+    "🔒 Your secrets are safe with me! 📝 Share anything, anytime—completely anonymous! 🤫👇",
+    "💬 Got something to say? Say it anonymously! No one will ever know! 🤐👇",
+    "🤭 Shhh... Drop me a secret message! I won’t know who sent it! 🔥👇",
+    "👀 Curious to know what people think about you? Let them send messages anonymously! 🔗👇",
+    "🚀 Speak your heart out, completely anonymously! Drop me a message now! 💌👇",
+  ];
+  const getRandomMessage = () => {
+    return shareMessages[Math.floor(Math.random() * shareMessages.length)];
+  };
+  
 
   const handleShare = (platform) => {
     if (!link) return;
     
     let shareUrl;
-    const text = `Send me anonymous messages on Secret Message!`;
+  const text = getRandomMessage(); // Har baar random message lega
     
     switch (platform) {
       case 'facebook':
