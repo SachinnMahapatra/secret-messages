@@ -12,7 +12,7 @@ const app = express();
 // **Middleware**
 app.use(express.json()); // JSON support
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://mystmessage.onrender.com'],
+  origin: ['http://localhost:5173', 'https://mystmessage.netlify.app/'],
   credentials: true 
 }));
 
