@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FiShare } from "react-icons/fi";
+import { FiShare, FiDownload } from "react-icons/fi";
 import html2canvas from "html2canvas";
 
 const ShareMessage = ({ messageId, content }) => {
@@ -17,9 +17,16 @@ const ShareMessage = ({ messageId, content }) => {
       tempDiv.style.left = '-9999px';
       tempDiv.style.top = '-9999px';
       tempDiv.innerHTML = `
-        <div style="width: 600px; padding: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 12px; font-family: 'Arial', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-          <div style="font-size: 24px; margin-bottom: 20px; line-height: 1.5;">${content}</div>
-          <div style="font-size: 14px; opacity: 0.8; text-align: right;">Secret Message</div>
+        <div style="width: 600px; padding: 40px; background: linear-gradient(135deg, #4f46e5, #818cf8); color: white; border-radius: 16px; font-family: 'Inter', sans-serif; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+          <div style="position: relative;">
+            <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); z-index: 0;"></div>
+            <div style="position: absolute; bottom: -40px; left: -30px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); z-index: 0;"></div>
+            <div style="font-size: 24px; margin-bottom: 20px; line-height: 1.5; position: relative; z-index: 1; font-weight: 500;">${content}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; position: relative; z-index: 1;">
+              <div style="font-size: 14px; opacity: 0.8;">Secret Message</div>
+              <div style="font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 20px;">mystmessage.netlify.app</div>
+            </div>
+          </div>
         </div>
       `;
       document.body.appendChild(tempDiv);
@@ -60,10 +67,10 @@ const ShareMessage = ({ messageId, content }) => {
   return (
     <button 
       onClick={handleShare}
-      className={`relative ml-2 p-2 rounded-full transition-colors ${
+      className={`relative group flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 ${
         isSharing 
           ? 'bg-indigo-100 text-indigo-600 cursor-not-allowed' 
-          : 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
+          : 'text-gray-500 hover:text-white hover:bg-indigo-600'
       }`}
       title="Share as image"
       ref={messageRef}
@@ -80,7 +87,12 @@ const ShareMessage = ({ messageId, content }) => {
           <FiShare size={18} className="opacity-0" />
         </div>
       ) : (
-        <FiShare size={18} />
+        <>
+          <FiDownload size={16} className="group-hover:scale-110 transition-transform duration-200" />
+          <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+            Save as image
+          </span>
+        </>
       )}
     </button>
   );
