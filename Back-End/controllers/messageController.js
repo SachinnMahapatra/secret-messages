@@ -9,17 +9,17 @@ export const sendMessage = async (req, res) => {
       return res.status(400).json({ success: false, error: "User ID and message content are required" });
     }
 
-    // 🛠️ ✅ Find User by uniqueLink instead of ObjectId
-    const user = await User.findOne({ uniqueLink: userId });
+    // Use the authenticated user from middleware if available, otherwise find by uniqueLink
+    const user = req.user || await User.findOne({ uniqueLink: userId });
 
     if (!user) {
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    // ✅ Save Message with Correct User `_id`
+    // Create new message - content will be automatically encrypted by the model
     const newMessage = new Message({
-      user: user._id, // Corrected User ID
-      content,
+      user: user._id,
+      content, // Will be encrypted by the model's setter
     });
 
     await newMessage.save();
@@ -32,13 +32,28 @@ export const sendMessage = async (req, res) => {
 };
 
 export const getMessages = async (req, res) => {
-    const { userId } = req.params;
-  
-    try {
-      const messages = await Message.find({ user: userId }).populate("user", "name");
-      res.json({ success: true, messages });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+  try {
+    // Use the authenticated user from middleware if available
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({ success: false, error: "Authentication required" });
     }
-  };
+
+    // Find messages for this user - they will be automatically decrypted by the model's toJSON
+    const messages = await Message.find({ user: user._id }).populate("user", "name");
+    
+    res.json({ 
+      success: true, 
+      messages,
+      user: {
+        name: user.name,
+        uniqueLink: user.uniqueLink
+      }
+    });
+  } catch (error) {
+    console.error("Error retrieving messages:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
   
