@@ -1,91 +1,106 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FiLink, FiEye, FiShare2, FiPlus } from 'react-icons/fi';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [generatedId, setGeneratedId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // ✅ Find if any generated link exists in localStorage
-    const keys = Object.values(localStorage);
-    const generatedKey = keys.find((key) => key.startsWith(""));
-
-    if (generatedKey) {
-      const extractedId = generatedKey.replace("generated-", ""); // Extract the ID
-      setGeneratedId(extractedId);
+    // Check if userId exists in localStorage
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
     }
   }, []);
 
+  // Function to handle sharing an existing link
+  const handleShareLink = () => {
+    const linkToShare = `${window.location.origin}/secret/${userId}?name=${encodeURIComponent(name)}`;
+    
+    // Check if the Web Share API is available
+    if (navigator.share) {
+      navigator.share({
+        title: 'Send me a secret message',
+        text: 'Send me an anonymous message!',
+        url: linkToShare,
+      })
+      .catch((error) => console.log('Error sharing:', error));
+    } else {
+      // Fallback: Copy to clipboard
+      navigator.clipboard.writeText(linkToShare)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch((err) => console.error('Failed to copy link: ', err));
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-200">
-      <div >
-        <div >
-          
-            <script type="text/javascript">
-              atOptions ={" "}
-              {`
-		'key' : '19a5aac66eca7386fdc01441d5f1c039',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	`}
-              ;
-            </script>
-            <script
-              type="text/javascript"
-              src="//www.highperformanceformat.com/19a5aac66eca7386fdc01441d5f1c039/invoke.js"
-            ></script>
-           
-          
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl text-center px-4 py-12 md:py-16">
+        <div className="mb-10">
+          <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6">
+            <FiLink className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="premium-title text-3xl md:text-4xl lg:text-5xl mb-4">
+            Welcome to Secret Message
+          </h1>
+          <p className="text-gray-600 text-sm md:text-lg max-w-md mx-auto mb-10">
+            Create your unique secret message link and share it anonymously with
+            friends!
+          </p>
+        </div>
+
+        <div className={`flex flex-col space-y-3 md:space-y-4 w-full max-w-md ${userId ? 'mb-8' : ''}`}>
+          {!userId ? (
+            <button
+              className="premium-btn premium-btn-primary flex items-center justify-center"
+              onClick={() => navigate("/create-link")}
+            >
+              <FiLink className="mr-2" /> Create Your Link
+            </button>
+          ) : (
+            <>
+              <button
+                className="premium-btn premium-btn-primary flex items-center justify-center"
+                onClick={() => navigate("/create-link")}
+              >
+                <FiPlus className="mr-2" /> Create New Link
+              </button>
+
+              <button
+                className="premium-btn premium-btn-outline flex items-center justify-center relative"
+                onClick={handleShareLink}
+              >
+                <FiShare2 className="mr-2" /> 
+                {copied ? 'Link Copied!' : 'Share Existing Link'}
+                
+                {copied && (
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs py-1 px-2 rounded animate-fade-in">
+                    Copied!
+                  </span>
+                )}
+              </button>
+
+              <button
+                className="premium-btn premium-btn-secondary flex items-center justify-center"
+                onClick={() => navigate(`/messages/${userId}`)}
+              >
+                <FiEye className="mr-2" /> View Messages
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl text-center py-8">
-        <h1 className="text-5xl font-extrabold mb-6 drop-shadow-lg">
-          Welcome to Secret Message
-        </h1>
-        <p className="text-lg mb-8 max-w-md drop-shadow-md">
-          Create your unique secret message link and share it anonymously with
-          friends!
-        </p>
-        <button
-          className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105 mb-4"
-          onClick={() => navigate("/create-link")}
-        >
-          Create Your Link
-        </button>
-
-        {/* ✅ "View Messages" button only appears if a generated link exists */}
-        {generatedId && (
-          <button
-            className="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition"
-            onClick={() => navigate(`/messages/${generatedId}`)}
-          >
-            View Messages
-          </button>
-        )}
-      </div>
-
-      <footer className="w-full py-4 text-center text-black/70 text-sm">
-        <p>© 2025 MystMessage . All rights reserved.</p>
-        <script type="text/javascript">
-              atOptions ={" "}
-              {`
-		'key' : '19a5aac66eca7386fdc01441d5f1c039',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	`}
-              ;
-            </script>
-            <script
-              type="text/javascript"
-              src="//www.highperformanceformat.com/19a5aac66eca7386fdc01441d5f1c039/invoke.js"
-            ></script>
+      <footer className="w-full py-4 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p>
+        </div>
       </footer>
-      <script type='text/javascript' src='//pl26015944.effectiveratecpm.com/2f/d2/6d/2fd26ddd6ce90cbf201ac3837d5395b7.js'></script>
     </div>
   );
 };

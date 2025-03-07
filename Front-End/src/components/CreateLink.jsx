@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Copy, Share2, Facebook, Twitter, Instagram, Mail, Check } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-
+import { FiLink, FiMessageSquare, FiLoader, FiCheckCircle } from 'react-icons/fi';
 
 const CreateLink = () => {
   const [name, setName] = useState("");
@@ -59,23 +59,24 @@ const CreateLink = () => {
       setTimeout(() => setCopied(false), 3000);
     }
   };
+
   const shareMessages = [
     "🔒 Your secrets are safe with me! 📝 Share anything, anytime—completely anonymous! 🤫👇",
     "💬 Got something to say? Say it anonymously! No one will ever know! 🤐👇",
-    "🤭 Shhh... Drop me a secret message! I won’t know who sent it! 🔥👇",
+    "🤭 Shhh... Drop me a secret message! I won't know who sent it! 🔥👇",
     "👀 Curious to know what people think about you? Let them send messages anonymously! 🔗👇",
     "🚀 Speak your heart out, completely anonymously! Drop me a message now! 💌👇",
   ];
+
   const getRandomMessage = () => {
     return shareMessages[Math.floor(Math.random() * shareMessages.length)];
   };
-  
 
   const handleShare = (platform) => {
     if (!link) return;
     
     let shareUrl;
-  const text = getRandomMessage(); // Har baar random message lega
+    const text = getRandomMessage();
     
     switch (platform) {
       case 'facebook':
@@ -109,159 +110,120 @@ const CreateLink = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Top Ad Banner */}
-      <div className="w-full bg-white p-4 shadow-md mb-6">
-        <div className="max-w-6xl mx-auto h-16 flex items-center justify-center border-2 border-dashed border-gray-300 rounded">
-          <p className="text-gray-500">Ad Space (Top Banner)</p>
-        </div>
-      </div>
-      
-      {/* Notification for Copy */}
-      {copied && (
-        <div className="fixed top-20 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg flex items-center space-x-2 animate-fade-in z-50">
-          <Check size={20} />
-          <p>Link copied successfully!</p>
-        </div>
-      )}
-      
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-6">
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center text-center py-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Create Your Secret Message Link</h2>
-          
-          <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 mb-6">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full px-4 py-2 border rounded-lg mb-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition mb-4"
-              onClick={handleCreateLink}
-              disabled={loading}
-            >
-              {loading ? "Generating..." : "Generate Link"}
-            </button>
-            
-            {link && (
-              <div className="mt-4 border-t pt-4">
-                <p className="text-gray-700 mb-3">Share this link to receive secret messages:</p>
-                <div className="flex mb-4">
-                  <input
-                    type="text"
-                    readOnly
-                    value={link}
-                    className="flex-1 px-3 py-2 border rounded-l-lg text-gray-600"
-                  />
-                  <button 
-                    onClick={handleCopyLink}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 flex items-center justify-center"
-                  >
-                    {copied ? <Check size={20} /> : <Copy size={20} />}
-                  </button>
-                </div>
-                
-                {/* Share Options */}
-                <div className="relative">
-                  <button 
-                    onClick={() => setShowShareOptions(!showShareOptions)}
-                    className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition flex items-center justify-center space-x-2"
-                  >
-                    <Share2 size={20} />
-                    <span>Share Link</span>
-                  </button>
-                  
-                  {showShareOptions && (
-                    <div className="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl p-4 z-10 animate-fade-in">
-                      <p className="text-gray-700 mb-3 font-medium">Share via:</p>
-                      <div className="grid grid-cols-4 gap-3">
-                        <button 
-                          onClick={() => handleShare('facebook')} 
-                          className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                        >
-                          <Facebook size={24} className="text-blue-600" />
-                          <span className="text-xs mt-1">Facebook</span>
-                        </button>
-                        <button 
-                          onClick={() => handleShare('twitter')} 
-                          className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                        >
-                          <Twitter size={24} className="text-blue-400" />
-                          <span className="text-xs mt-1">Twitter</span>
-                        </button>
-                        <button 
-                          onClick={() => handleShare('whatsapp')} 
-                          className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                        >
-                          <FaWhatsapp size={24} className="text-green-500" />
-                          <span className="text-xs mt-1">WhatsApp</span>
-                        </button>
-                        <button 
-                          onClick={() => handleShare('email')} 
-                          className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                        >
-                          <Mail size={24} className="text-gray-600" />
-                          <span className="text-xs mt-1">Email</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl text-center px-4 py-12 md:py-16">
+        <div className="mb-10">
+          <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6">
+            <FiMessageSquare className="w-10 h-10 text-white" />
           </div>
-          
+          <h2 className="premium-title text-3xl md:text-4xl lg:text-5xl mb-4">
+            Create Your Secret Message Link
+          </h2>
+          <p className="text-gray-600 text-sm md:text-lg max-w-md mx-auto mb-10">
+            Generate a unique link to receive anonymous messages from your friends!
+          </p>
+        </div>
+
+        <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 mb-6">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            className="premium-input mb-4"
+          />
           <button
-            className="bg-green-600 text-white px-8 py-3 rounded-lg shadow-md hover:bg-green-700 transition mb-8 flex items-center space-x-2"
-            onClick={handleViewMessages}
+            className="premium-btn premium-btn-primary w-full flex items-center justify-center"
+            onClick={handleCreateLink}
+            disabled={loading}
           >
-            <span>View My Messages</span>
+            {loading ? (
+              <FiLoader className="animate-spin mr-2" />
+            ) : (
+              <FiLink className="mr-2" />
+            )}
+            {loading ? "Generating..." : "Generate Link"}
           </button>
-          
-          {/* Bottom Ad Space */}
-          <div className="w-full max-w-md bg-white shadow-lg p-4 rounded-lg mb-6">
-            <div className="h-20 flex items-center justify-center border-2 border-dashed border-gray-300 rounded">
-              <p className="text-gray-500">Ad Space (Bottom)</p>
+
+          {link && (
+            <div className="mt-4 border-t pt-4">
+              <p className="text-gray-700 mb-3">Share this link to receive secret messages:</p>
+              <div className="flex mb-4">
+                <input
+                  type="text"
+                  readOnly
+                  value={link}
+                  className="flex-1 px-3 py-2 border rounded-l-lg text-gray-600"
+                />
+                <button 
+                  onClick={handleCopyLink}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 flex items-center justify-center"
+                >
+                  {copied ? <FiCheckCircle size={20} /> : <Copy size={20} />}
+                </button>
+              </div>
+
+              {/* Share Options */}
+              <div className="relative">
+                <button 
+                  onClick={() => setShowShareOptions(!showShareOptions)}
+                  className="premium-btn premium-btn-outline w-full flex items-center justify-center space-x-2"
+                >
+                  <Share2 size={20} />
+                  <span>Share Link</span>
+                </button>
+
+                {showShareOptions && (
+                  <div className="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl p-4 z-10 animate-fade-in">
+                    <p className="text-gray-700 mb-3 font-medium">Share via:</p>
+                    <div className="grid grid-cols-4 gap-3">
+                      <button 
+                        onClick={() => handleShare('facebook')} 
+                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <Facebook size={24} className="text-blue-600" />
+                        <span className="text-xs mt-1">Facebook</span>
+                      </button>
+                      <button 
+                        onClick={() => handleShare('twitter')} 
+                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <Twitter size={24} className="text-blue-400" />
+                        <span className="text-xs mt-1">Twitter</span>
+                      </button>
+                      <button 
+                        onClick={() => handleShare('Whatsapp')} 
+                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <FaWhatsapp size={24} className="text-green-500" />
+                        <span className="text-xs mt-1">WhatsApp</span>
+                      </button>
+                      <button 
+                        onClick={() => handleShare('email')} 
+                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <Mail size={24} className="text-gray-600" />
+                        <span className="text-xs mt-1">Email</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
-        
-        {/* Side Ad Column */}
-        <div className="md:w-64 py-8">
-          <div className="bg-white shadow-lg p-4 rounded-lg mb-6">
-            <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-300 rounded">
-              <p className="text-gray-500">Ad Space (Sidebar)</p>
-            </div>
-          </div>
-          
-          {/* Tips Box */}
-          <div className="bg-white shadow-lg p-4 rounded-lg">
-            <h3 className="font-medium text-gray-800 mb-3 border-b pb-2">Tips</h3>
-            <ul className="text-sm text-gray-700 space-y-2">
-              <li className="flex items-start space-x-2">
-                <span>•</span>
-                <span>Share your link on social media</span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span>•</span>
-                <span>Ask friends to send anonymous messages</span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span>•</span>
-                <span>Check messages regularly</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+
+        <button
+          className="premium-btn premium-btn-secondary w-full max-w-md flex items-center justify-center"
+          onClick={handleViewMessages}
+        >
+          <FiMessageSquare className="mr-2" /> View My Messages
+        </button>
       </div>
-      
-      {/* Footer */}
-      <footer className="w-full py-4 bg-white shadow-inner mt-8">
-        <div className="max-w-6xl mx-auto px-4 text-center text-gray-600 text-sm">
-          <p>© 2025 Secret Message. All rights reserved.</p>
+
+      <footer className="w-full py-4 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p>
         </div>
       </footer>
     </div>
