@@ -100,7 +100,7 @@ function Header() {
             About
           </Link>
           <a 
-            href="https://github.com/yourusername/secret-message" 
+            href="https://github.com/SachinnMahapatra" 
             target="_blank" 
             rel="noopener noreferrer"
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-indigo-600 hover:bg-gray-50"

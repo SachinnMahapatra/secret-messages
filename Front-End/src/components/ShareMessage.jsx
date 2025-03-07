@@ -24,7 +24,7 @@ const ShareMessage = ({ messageId, content }) => {
             <div style="font-size: 24px; margin-bottom: 20px; line-height: 1.5; position: relative; z-index: 1; font-weight: 500;">${content}</div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; position: relative; z-index: 1;">
               <div style="font-size: 14px; opacity: 0.8;">Secret Message</div>
-              <div style="font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 20px;">mystmessage.netlify.app</div>
+              <div style="font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 20px;">mystmessage.onrender.com</div>
             </div>
           </div>
         </div>

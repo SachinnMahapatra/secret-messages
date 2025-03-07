@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import About from "./pages/About";
 // import SecretPage from "./pages/SecretMessage";
 import CreateLink from "./components/CreateLink";
 import SecretMessage from "./pages/SecretMessage";
@@ -30,6 +31,11 @@ function App() {
         <Route path="/" element={
           <MainLayout>
             <Home />
+          </MainLayout>
+        } />
+        <Route path="/about" element={
+          <MainLayout>
+            <About />
           </MainLayout>
         } />
         <Route path="/create-link" element={
