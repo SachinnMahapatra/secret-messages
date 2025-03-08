@@ -9,6 +9,9 @@ const MessageList = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  const POLLING_INTERVAL = 10000; // 10 seconds
 
   useEffect(() => {
     const storedKey = localStorage.getItem("authKey");
@@ -21,8 +24,29 @@ const MessageList = () => {
     }
   }, [id]);
 
-  const fetchMessages = async () => {
-    setIsLoading(true);
+  useEffect(() => {
+    let intervalId;
+    
+    if (isAuthorized) {
+      intervalId = setInterval(() => {
+        fetchMessages(true);
+      }, POLLING_INTERVAL);
+    }
+    
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isAuthorized, id]);
+
+  const fetchMessages = async (isPolling = false) => {
+    if (isPolling) {
+      setRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
+    
     try {
       const response = await fetch(`https://mystmessage.onrender.com/api/user/${id}/messages`);
       const data = await response.json();
@@ -36,7 +60,12 @@ const MessageList = () => {
       setError("An error occurred while fetching messages");
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleManualRefresh = () => {
+    fetchMessages(true);
   };
 
   if (!isAuthorized) {
@@ -84,6 +113,11 @@ const MessageList = () => {
             </div>
           ) : messages.length > 0 ? (
             <div className="space-y-4">
+              {refreshing && (
+                <div className="text-xs text-center text-gray-400 py-1 animate-pulse">
+                  Refreshing messages...
+                </div>
+              )}
               {messages.map((msg, index) => (
                 <div 
                   key={msg._id} 
@@ -121,6 +155,13 @@ const MessageList = () => {
         </div>
         
         <div className="text-center">
+          <button 
+            onClick={handleManualRefresh}
+            className="premium-btn premium-btn-primary mr-2"
+            disabled={refreshing || isLoading}
+          >
+            {refreshing ? 'Refreshing...' : 'Refresh Messages'}
+          </button>
           <button 
             onClick={() => window.location.href = '/'}
             className="premium-btn premium-btn-outline"
