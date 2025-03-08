@@ -46,7 +46,7 @@ const ShareMessage = ({ messageId, content }) => {
           <div style="position: absolute; bottom: -40px; left: -30px; width: ${isMobile ? '60px' : '80px'}; height: ${isMobile ? '60px' : '80px'}; border-radius: 50%; background: rgba(255, 255, 255, 0.1); z-index: 0;"></div>
           <div style="font-size: ${isMobile ? '18px' : '24px'}; margin-bottom: 20px; line-height: 1.5; position: relative; z-index: 1; font-weight: 500;">${content}</div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; position: relative; z-index: 1;">
-            <div style="font-size: ${isMobile ? '12px' : '14px'}; opacity: 0.8;">Secret Message</div>
+            <div style="font-size: ${isMobile ? '12px' : '14px'}; opacity: 0.8;"></div>
             <div style="font-size: ${isMobile ? '10px' : '12px'}; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 20px;">mystmessage.netlify.app</div>
           </div>
         </div>
