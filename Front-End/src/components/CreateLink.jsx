@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Copy, Share2, Facebook, Twitter, Instagram, Mail, Check } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { FiLink, FiMessageSquare, FiLoader, FiCheckCircle } from 'react-icons/fi';
+import TermsAndPrivacy from "./TermsAndPrivacy";
 
 const CreateLink = () => {
   const [name, setName] = useState("");
@@ -10,10 +11,11 @@ const CreateLink = () => {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
 
   const handleCreateLink = async () => {
-    if (!name.trim()) return;
+    if (!name.trim() || !termsAccepted) return;
     
     setLoading(true);
     
@@ -132,10 +134,17 @@ const CreateLink = () => {
             placeholder="Enter your name"
             className="premium-input mb-4"
           />
+
+          <div className="mb-6">
+            <TermsAndPrivacy onAccept={setTermsAccepted} />
+          </div>
+
           <button
-            className="premium-btn premium-btn-primary w-full flex items-center justify-center"
+            className={`premium-btn premium-btn-primary w-full flex items-center justify-center ${
+              !termsAccepted ? 'opacity-75 cursor-not-allowed' : ''
+            }`}
             onClick={handleCreateLink}
-            disabled={loading}
+            disabled={loading || !termsAccepted}
           >
             {loading ? (
               <FiLoader className="animate-spin mr-2" />
@@ -144,74 +153,69 @@ const CreateLink = () => {
             )}
             {loading ? "Generating..." : "Generate Link"}
           </button>
-
-          {link && (
-            <div className="mt-4 border-t pt-4">
-              <p className="text-gray-700 mb-3">Share this link to receive secret messages:</p>
-              <div className="flex mb-4">
-                <input
-                  type="text"
-                  readOnly
-                  value={link}
-                  className="flex-1 px-3 py-2 border rounded-l-lg text-gray-600"
-                />
-                <button 
-                  onClick={handleCopyLink}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 flex items-center justify-center"
-                >
-                  {copied ? <FiCheckCircle size={20} /> : <Copy size={20} />}
-                </button>
-              </div>
-
-              {/* Share Options */}
-              <div className="relative">
-                <button 
-                  onClick={() => setShowShareOptions(!showShareOptions)}
-                  className="premium-btn premium-btn-outline w-full flex items-center justify-center space-x-2"
-                >
-                  <Share2 size={20} />
-                  <span>Share Link</span>
-                </button>
-
-                {showShareOptions && (
-                  <div className="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl p-4 z-10 animate-fade-in">
-                    <p className="text-gray-700 mb-3 font-medium">Share via:</p>
-                    <div className="grid grid-cols-4 gap-3">
-                      <button 
-                        onClick={() => handleShare('facebook')} 
-                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                      >
-                        <Facebook size={24} className="text-blue-600" />
-                        <span className="text-xs mt-1">Facebook</span>
-                      </button>
-                      <button 
-                        onClick={() => handleShare('twitter')} 
-                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                      >
-                        <Twitter size={24} className="text-blue-400" />
-                        <span className="text-xs mt-1">Twitter</span>
-                      </button>
-                      <button 
-                        onClick={() => handleShare('Whatsapp')} 
-                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                      >
-                        <FaWhatsapp size={24} className="text-green-500" />
-                        <span className="text-xs mt-1">WhatsApp</span>
-                      </button>
-                      <button 
-                        onClick={() => handleShare('email')} 
-                        className="flex flex-col items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
-                      >
-                        <Mail size={24} className="text-gray-600" />
-                        <span className="text-xs mt-1">Email</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
+
+        {link && (
+          <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">Your Secret Message Link</h3>
+              <button
+                onClick={handleCopyLink}
+                className="premium-btn premium-btn-outline text-sm"
+              >
+                {copied ? (
+                  <>
+                    <FiCheckCircle className="mr-2" /> Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2" /> Copy Link
+                  </>
+                )}
+              </button>
+            </div>
+            
+            <div className="bg-gray-50 p-3 rounded-lg mb-4 break-all">
+              <p className="text-sm text-gray-600">{link}</p>
+            </div>
+            
+            <button
+              onClick={() => setShowShareOptions(!showShareOptions)}
+              className="premium-btn premium-btn-secondary w-full flex items-center justify-center"
+            >
+              <Share2 className="mr-2" /> Share Link
+            </button>
+            
+            {showShareOptions && (
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleShare('facebook')}
+                  className="premium-btn premium-btn-outline flex items-center justify-center"
+                >
+                  <Facebook className="mr-2" /> Facebook
+                </button>
+                <button
+                  onClick={() => handleShare('twitter')}
+                  className="premium-btn premium-btn-outline flex items-center justify-center"
+                >
+                  <Twitter className="mr-2" /> Twitter
+                </button>
+                <button
+                  onClick={() => handleShare('Whatsapp')}
+                  className="premium-btn premium-btn-outline flex items-center justify-center"
+                >
+                  <FaWhatsapp className="mr-2" /> WhatsApp
+                </button>
+                <button
+                  onClick={() => handleShare('email')}
+                  className="premium-btn premium-btn-outline flex items-center justify-center"
+                >
+                  <Mail className="mr-2" /> Email
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           className="premium-btn premium-btn-secondary w-full max-w-md flex items-center justify-center"

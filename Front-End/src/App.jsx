@@ -6,6 +6,7 @@ import CreateLink from "./components/CreateLink";
 import SecretMessage from "./pages/SecretMessage";
 import MessageList from "./components/MessageList";
 import Header from "./components/Header";
+import TermsPage from "./pages/TermsPage";
 
 // Layout component to wrap routes that should have the header
 const MainLayout = ({ children }) => {
@@ -41,6 +42,11 @@ function App() {
         <Route path="/create-link" element={
           <MainLayout>
             <CreateLink />
+          </MainLayout>
+        } />
+        <Route path="/terms" element={
+          <MainLayout>
+            <TermsPage />
           </MainLayout>
         } />
         {/* These routes don't need the header */}
