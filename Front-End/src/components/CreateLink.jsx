@@ -227,7 +227,7 @@ const CreateLink = () => {
 
       <footer className="w-full py-4 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p>
+          {/* <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p> */}
         </div>
       </footer>
     </div>
