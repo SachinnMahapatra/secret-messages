@@ -86,6 +86,17 @@ a { color: inherit; }
 .hero-trust-row p { margin: 0; color: #92909c; font-size: 11px; line-height: 1.55; }
 .hero-trust-row strong { color: #5e5b6c; font-size: 12px; }
 .share-hint { margin: 9px 0 0 2px; color: var(--green); font-size: 12px; }
+.home-link-card { width: min(100%, 490px); min-width: 0; margin-top: 17px; padding: 14px 15px 11px; border: 1px solid #e8e3ed; border-radius: 15px; background: rgba(255,255,255,.82); box-shadow: 0 9px 24px rgba(44,37,60,.045); }
+.home-link-heading { display: flex; min-width: 0; align-items: center; gap: 10px; }
+.home-link-icon { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; border-radius: 10px; background: #eee8fa; color: var(--purple); }
+.home-link-heading > div { min-width: 0; }
+.home-link-heading .panel-step { display: block; margin-bottom: 2px; overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.home-link-heading strong { display: block; color: #48455b; font-size: 12px; font-weight: 650; }
+.home-link-copy { display: flex; width: 100%; min-width: 0; align-items: center; gap: 8px; margin-top: 10px; padding: 7px 8px 7px 11px; border: 1px solid #e8e3ee; border-radius: 10px; background: #f8f6fb; text-align: left; cursor: pointer; }
+.home-link-copy:hover { border-color: #cfc4e4; background: #f4f0fa; }
+.home-link-preview { flex: 1 1 0; min-width: 0; overflow: hidden; color: #77718c; font-size: 11px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.home-link-copy-icon { display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center; border-radius: 8px; background: #ebe5f5; color: var(--purple); }
+.home-link-hint { margin: 7px 0 0; color: #9995a1; font-size: 10px; }
 .hero-visual { position: relative; display: grid; min-height: 430px; place-items: center; border: 1px solid #e5e0ef; border-radius: 37% 30% 35% 28% / 32% 34% 29% 36%; background: #efebf8; overflow: hidden; isolation: isolate; }
 .hero-visual::before { content: ""; position: absolute; inset: 11% 12%; z-index: -1; border: 1px dashed rgba(102,83,164,.23); border-radius: 50%; transform: rotate(-14deg); }
 .hero-visual::after { content: ""; position: absolute; z-index: -2; width: 310px; height: 310px; border-radius: 50%; background: #e3ddf1; filter: blur(1px); }

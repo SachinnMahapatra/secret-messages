@@ -1,27 +1,45 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowUpRight, Eye, Link2, LockKeyhole, MessageCircle, Plus, Share2, Sparkles } from "lucide-react";
+import { ArrowUpRight, Check, Copy, Eye, Link2, LockKeyhole, MessageCircle, Plus, Share2, Sparkles } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState("");
+  const [savedLink, setSavedLink] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setUserId(localStorage.getItem("userId"));
+    const storedUserId = localStorage.getItem("userId");
+    const storedName = localStorage.getItem("userName") || "";
+    setUserId(storedUserId);
+    setUserName(storedName);
+    if (storedUserId) {
+      const nameParam = storedName ? `?name=${encodeURIComponent(storedName)}` : "";
+      setSavedLink(`${window.location.origin}/secret/${storedUserId}${nameParam}`);
+    }
   }, []);
 
+  const handleCopyLink = async () => {
+    if (!savedLink) return;
+    try {
+      await navigator.clipboard.writeText(savedLink);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2400);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   const handleShareLink = async () => {
-    if (!userId) return;
-    const name = localStorage.getItem("userName") || "me";
-    const linkToShare = `${window.location.origin}/secret/${userId}?name=${encodeURIComponent(name)}`;
+    if (!savedLink) return;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: "Send me a secret message",
           text: "Leave me an anonymous note on MystMessage.",
-          url: linkToShare,
+          url: savedLink,
         });
       } catch {
         // Closing the native share sheet is an expected action.
@@ -30,9 +48,9 @@ const Home = () => {
     }
 
     try {
-      await navigator.clipboard.writeText(linkToShare);
+      await navigator.clipboard.writeText(savedLink);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 2200);
+      window.setTimeout(() => setCopied(false), 2400);
     } catch {
       setCopied(false);
     }
@@ -63,7 +81,20 @@ const Home = () => {
               <span className="hero-microcopy"><LockKeyhole size={14} /> No account needed</span>
             )}
           </div>
-          {userId && <p className="share-hint" aria-live="polite">{copied ? "Your link is ready to paste." : "Your inbox is saved on this device."}</p>}
+          {userId && savedLink && (
+            <div className="home-link-card">
+              <div className="home-link-heading">
+                <span className="home-link-icon"><Link2 size={16} /></span>
+                <div><span className="panel-step">{userName ? `${userName.toUpperCase()}’S LINK` : "YOUR MESSAGE LINK"}</span><strong>Your Link is ready to share</strong></div>
+              </div>
+              <button type="button" className="home-link-copy" onClick={handleCopyLink} aria-label="Copy your full secret message link">
+                <span className="home-link-preview">{copied ? "Copied to clipboard" : `${window.location.host}/secret/••••••`}</span>
+                <span className="home-link-copy-icon">{copied ? <Check size={17} /> : <Copy size={17} />}</span>
+              </button>
+              <p className="home-link-hint" aria-live="polite">{copied ? "Your full link is copied and ready to paste." : "Tap the link to copy the full address."}</p>
+            </div>
+          )}
+          {userId && !savedLink && <p className="share-hint" aria-live="polite">Your inbox is saved on this device.</p>}
 
           <div className="hero-trust-row">
             <div className="avatar-stack" aria-hidden="true"><span>J</span><span>M</span><span>A</span><span>+</span></div>
