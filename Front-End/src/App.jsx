@@ -14,7 +14,7 @@ const MainLayout = ({ children }) => (
     <footer className="site-footer">
       <div className="footer-inner">
         <Link className="footer-brand" to="/" aria-label="MystMessage home">
-          <span className="brand-mark" aria-hidden="true">m</span>
+          <img className="brand-mark-image" src="/MystMessage-icon-ambient.png" alt="" />
           <span>MystMessage</span>
         </Link>
         <span className="footer-note">A little more honest. A little less exposed.</span>

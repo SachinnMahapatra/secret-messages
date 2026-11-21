@@ -45,7 +45,7 @@ const SecretMessage = () => {
   return (
     <div className="standalone-page send-page">
       <Link to="/" className="standalone-brand">
-        <span className="brand-mark" aria-hidden="true">m</span><span className="brand-name">Myst<span>Message</span></span>
+        <img className="brand-mark-image" src="/MystMessage-icon-ambient.png" alt="" /><span className="brand-name">Myst<span>Message</span></span>
       </Link>
 
       <div className="send-layout">

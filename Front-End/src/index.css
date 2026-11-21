@@ -36,7 +36,7 @@ a { color: inherit; }
 .site-header { position: sticky; top: 0; z-index: 30; background: rgba(251, 250, 247, .92); border-bottom: 1px solid rgba(40, 37, 62, .08); backdrop-filter: blur(18px); }
 .header-inner { height: 76px; width: min(1240px, calc(100% - 56px)); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; }
 .brand, .standalone-brand, .footer-brand { display: inline-flex; gap: 11px; align-items: center; text-decoration: none; }
-.brand-mark { display: inline-grid; width: 35px; height: 35px; place-items: center; border-radius: 12px; background: var(--ink); color: var(--lime); font: 700 25px/1 Georgia, serif; transform: rotate(-5deg); }
+.brand-mark-image { display: block; width: 35px; height: 35px; flex: 0 0 35px; border-radius: 12px; object-fit: cover; }
 .brand-name { color: var(--ink); font-weight: 750; font-size: 16px; letter-spacing: -.5px; }
 .brand-name span { font-weight: 450; }
 .primary-nav { display: flex; align-items: center; gap: 30px; }
@@ -62,7 +62,7 @@ a { color: inherit; }
 .site-footer { border-top: 1px solid var(--line); background: #f7f5f1; }
 .footer-inner { width: min(1160px, calc(100% - 56px)); min-height: 76px; margin-inline: auto; display: flex; align-items: center; gap: 22px; }
 .footer-brand { font-size: 13px; font-weight: 700; text-decoration: none; }
-.footer-brand .brand-mark { width: 27px; height: 27px; font-size: 19px; border-radius: 9px; }
+.footer-brand .brand-mark-image { width: 27px; height: 27px; flex-basis: 27px; border-radius: 9px; }
 .footer-note, .footer-copy { color: #888694; font-size: 12px; }
 .footer-copy { margin-left: auto; }
 

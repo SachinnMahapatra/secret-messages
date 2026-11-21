@@ -12,7 +12,7 @@ function Header() {
     <header className="site-header">
       <div className="header-inner">
         <Link to="/" className="brand" onClick={closeMenu} aria-label="MystMessage home">
-          <span className="brand-mark" aria-hidden="true">m</span>
+          <img className="brand-mark-image" src="/MystMessage-icon-ambient.png" alt="" />
           <span className="brand-name">Myst<span>Message</span></span>
         </Link>
 

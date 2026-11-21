@@ -47,7 +47,7 @@ const MessageList = () => {
   if (!isAuthorized) {
     return (
       <div className="standalone-page dashboard-page">
-        <Link to="/" className="standalone-brand"><span className="brand-mark" aria-hidden="true">m</span><span className="brand-name">Myst<span>Message</span></span></Link>
+        <Link to="/" className="standalone-brand"><img className="brand-mark-image" src="/MystMessage-icon-ambient.png" alt="" /><span className="brand-name">Myst<span>Message</span></span></Link>
         <section className="access-card">
           <span className="access-icon"><LockKeyhole size={25} /></span>
           <span className="panel-step">PRIVATE INBOX</span>
@@ -62,7 +62,7 @@ const MessageList = () => {
   return (
     <div className="standalone-page dashboard-page">
       <div className="dashboard-topbar">
-        <Link to="/" className="standalone-brand"><span className="brand-mark" aria-hidden="true">m</span><span className="brand-name">Myst<span>Message</span></span></Link>
+        <Link to="/" className="standalone-brand"><img className="brand-mark-image" src="/MystMessage-icon-ambient.png" alt="" /><span className="brand-name">Myst<span>Message</span></span></Link>
         <Link to="/" className="back-button"><ArrowLeft size={15} /> Home</Link>
       </div>
 
