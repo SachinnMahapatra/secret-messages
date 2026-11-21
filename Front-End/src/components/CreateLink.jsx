@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Copy, Link2, LoaderCircle, Mail, MessageCircle, MessagesSquare, Share2, Sparkles } from "lucide-react";
 import TermsAndPrivacy from "./TermsAndPrivacy";
+import { getSavedOwnerProfile, saveOwnerProfile } from "../utils/userLink";
 
 const CreateLink = () => {
-  const [name, setName] = useState("");
-  const [link, setLink] = useState(null);
+  const [savedProfile] = useState(() => getSavedOwnerProfile());
+  const [name, setName] = useState(() => savedProfile?.name || "");
+  const [link, setLink] = useState(() => savedProfile?.link || null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
@@ -32,11 +34,8 @@ const CreateLink = () => {
       }
 
       const uniqueId = data.user.uniqueLink;
-      const generatedLink = `${window.location.origin}/secret/${uniqueId}?name=${encodeURIComponent(name.trim())}`;
+      const generatedLink = saveOwnerProfile(uniqueId, name);
       setLink(generatedLink);
-      localStorage.setItem("authKey", `auth-${uniqueId}`);
-      localStorage.setItem("userId", uniqueId);
-      localStorage.setItem("userName", name.trim());
       localStorage.setItem(`generated-${uniqueId}`, "true");
     } catch (requestError) {
       setError(requestError.message || "Something went wrong. Please try again.");

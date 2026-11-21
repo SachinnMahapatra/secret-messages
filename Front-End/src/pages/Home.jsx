@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight, Check, Copy, Eye, Link2, LockKeyhole, MessageCircle, Plus, Share2, Sparkles } from "lucide-react";
+import { getSavedOwnerProfile } from "../utils/userLink";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState("");
-  const [savedLink, setSavedLink] = useState("");
+  const [ownerProfile, setOwnerProfile] = useState(() => getSavedOwnerProfile());
+  const userId = ownerProfile?.userId || null;
+  const userName = ownerProfile?.name || "";
+  const savedLink = ownerProfile?.link || "";
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    const storedName = localStorage.getItem("userName") || "";
-    setUserId(storedUserId);
-    setUserName(storedName);
-    if (storedUserId) {
-      const nameParam = storedName ? `?name=${encodeURIComponent(storedName)}` : "";
-      setSavedLink(`${window.location.origin}/secret/${storedUserId}${nameParam}`);
-    }
+    const syncOwnerProfile = () => setOwnerProfile(getSavedOwnerProfile());
+    window.addEventListener("storage", syncOwnerProfile);
+    return () => window.removeEventListener("storage", syncOwnerProfile);
   }, []);
 
   const handleCopyLink = async () => {
