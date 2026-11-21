@@ -1,42 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
-const TermsAndPrivacy = ({ onAccept }) => {
-  const [accepted, setAccepted] = useState(false);
-  const navigate = useNavigate();
+const TermsAndPrivacy = ({ onAccept }) => (
+  <div className="terms-check-card">
+    <span className="terms-shield"><ShieldCheck size={17} /></span>
+    <label htmlFor="accept-terms" className="terms-label">
+      <input
+        id="accept-terms"
+        type="checkbox"
+        onChange={(event) => onAccept(event.target.checked)}
+      />
+      <span>I agree to the <Link to="/terms">Terms and Conditions &amp; Privacy Policy</Link>.</span>
+    </label>
+  </div>
+);
 
-  const handleAccept = () => {
-    setAccepted(true);
-    onAccept(true);
-  };
-
-  const handleViewFullTerms = () => {
-    navigate('/terms');
-  };
-
-  return (
-    <div className="terms-container bg-white rounded-lg p-4 border border-gray-200">
-      <div className="flex items-start space-x-3">
-        <input
-          type="checkbox"
-          checked={accepted}
-          onChange={handleAccept}
-          className="form-checkbox h-5 w-5 text-blue-600 mt-1"
-        />
-        <div>
-          <p className="text-gray-700 text-sm">
-            I agree to the{' '}
-            <button
-              onClick={handleViewFullTerms}
-              className="text-blue-600 hover:text-blue-800 underline"
-            >
-              Terms and Conditions & Privacy Policy
-            </button>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default TermsAndPrivacy; 
+export default TermsAndPrivacy;

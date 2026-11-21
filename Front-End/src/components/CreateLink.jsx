@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, Share2, Facebook, Twitter, Instagram, Mail, Check } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
-import { FiLink, FiMessageSquare, FiLoader, FiCheckCircle } from 'react-icons/fi';
+import { Check, Copy, Link2, LoaderCircle, Mail, MessageCircle, MessagesSquare, Share2, Sparkles } from "lucide-react";
 import TermsAndPrivacy from "./TermsAndPrivacy";
 
 const CreateLink = () => {
@@ -12,224 +10,152 @@ const CreateLink = () => {
   const [copied, setCopied] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleCreateLink = async () => {
-    if (!name.trim() || !termsAccepted) return;
-    
+  const handleCreateLink = async (event) => {
+    event.preventDefault();
+    if (!name.trim() || !termsAccepted || loading) return;
+
     setLoading(true);
-    
+    setError("");
     try {
       const response = await fetch("https://mystmessage.onrender.com/api/user/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim() }),
       });
-
       const data = await response.json();
 
-      if (data.success) {
-        const uniqueId = data.user.uniqueLink;
-        const generatedLink = `${window.location.origin}/secret/${uniqueId}?name=${encodeURIComponent(name)}`;
-
-        setLink(generatedLink);
-        localStorage.setItem("authKey", `auth-${uniqueId}`);
-        localStorage.setItem("userId", uniqueId);
-      } else {
-        console.error("Error:", data.error);
+      if (!response.ok || !data.success || !data.user?.uniqueLink) {
+        throw new Error(data.error || "We couldn't create your link. Please try again.");
       }
-    } catch (error) {
-      console.error("Failed to create user:", error);
+
+      const uniqueId = data.user.uniqueLink;
+      const generatedLink = `${window.location.origin}/secret/${uniqueId}?name=${encodeURIComponent(name.trim())}`;
+      setLink(generatedLink);
+      localStorage.setItem("authKey", `auth-${uniqueId}`);
+      localStorage.setItem("userId", uniqueId);
+      localStorage.setItem("userName", name.trim());
+      localStorage.setItem(`generated-${uniqueId}`, "true");
+    } catch (requestError) {
+      setError(requestError.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleViewMessages = () => {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      navigate(`/messages/${storedUserId}`);
-    }
-  };
-
-  const handleCopyLink = () => {
-    if (link) {
-      navigator.clipboard.writeText(link);
+  const handleCopyLink = async () => {
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
       setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      window.setTimeout(() => setCopied(false), 2400);
+    } catch {
+      setError("Your browser couldn't copy the link. Select and copy it instead.");
     }
   };
 
   const shareMessages = [
-    "🔒 Your secrets are safe with me! 📝 Share anything, anytime—completely anonymous! 🤫👇",
-    "💬 Got something to say? Say it anonymously! No one will ever know! 🤐👇",
-    "🤭 Shhh... Drop me a secret message! I won't know who sent it! 🔥👇",
-    "👀 Curious to know what people think about you? Let them send messages anonymously! 🔗👇",
-    "🚀 Speak your heart out, completely anonymously! Drop me a message now! 💌👇",
+    "Your secrets are safe with me! Leave me an anonymous note:",
+    "Got something to say? Tell me anonymously:",
+    "A little honesty, no names attached. Drop me a note:",
+    "Curious what you really think? Leave me a message:",
   ];
-
-  const getRandomMessage = () => {
-    return shareMessages[Math.floor(Math.random() * shareMessages.length)];
-  };
 
   const handleShare = (platform) => {
     if (!link) return;
-    
-    let shareUrl;
-    const text = getRandomMessage();
-    
-    switch (platform) {
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(text)}`;
-        break;
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
-        break;
-      case 'Whatsapp':
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`;
-        break;
-      case 'email':
-        shareUrl = `mailto:?subject=${encodeURIComponent('Send me anonymous messages!')}&body=${encodeURIComponent(text + ' ' + link)}`;
-        break;
-      default:
-        if (navigator.share) {
-          navigator.share({
-            title: 'Secret Message',
-            text: text,
-            url: link,
-          });
-          return;
-        }
-    }
-    
-    if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400');
-    }
-    
+    const text = shareMessages[Math.floor(Math.random() * shareMessages.length)];
+    const shareTargets = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(text)}`,
+      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${link}`)}`,
+      email: `mailto:?subject=${encodeURIComponent("Send me an anonymous message")}&body=${encodeURIComponent(`${text} ${link}`)}`,
+    };
+    const target = shareTargets[platform];
+    if (target) window.open(target, "_blank", "noopener,noreferrer,width=640,height=520");
     setShowShareOptions(false);
   };
 
+  const handleViewMessages = () => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) navigate(`/messages/${storedUserId}`);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center">
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl text-center px-4 py-12 md:py-16">
-        <div className="mb-10">
-          <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6">
-            <FiMessageSquare className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="premium-title text-3xl md:text-4xl lg:text-5xl mb-4">
-            Create Your Secret Message Link
-          </h2>
-          <p className="text-gray-600 text-sm md:text-lg max-w-md mx-auto mb-10">
-            Generate a unique link to receive anonymous messages from your friends!
-          </p>
+    <div className="create-page page-container">
+      <section className="create-intro">
+        <div className="eyebrow"><span className="eyebrow-spark"><Sparkles size={13} /></span> YOUR VERY OWN INBOX</div>
+        <h1>Let the honest<br /><em>notes find you.</em></h1>
+        <p>Start with your name. We’ll make a personal link where friends can leave you anonymous messages.</p>
+        <div className="create-points">
+          <div><span className="point-check"><Check size={14} /></span><span><strong>One link, all yours</strong><small>Share it wherever your people are.</small></span></div>
+          <div><span className="point-check"><Check size={14} /></span><span><strong>No sign-up hoops</strong><small>Your inbox is ready in a moment.</small></span></div>
+          <div><span className="point-check"><Check size={14} /></span><span><strong>Anonymous by default</strong><small>Messages arrive without a sender name.</small></span></div>
+        </div>
+        <div className="create-note"><span className="note-quote-mark">“</span><p>Sometimes the best things are easier to say without a name attached.</p></div>
+      </section>
+
+      <section className="create-panel" aria-labelledby="create-heading">
+        <div className="panel-heading">
+          <span className="panel-icon"><MessagesSquare size={20} /></span>
+          <div><span className="panel-step">LET’S GET STARTED</span><h2 id="create-heading">Create your link</h2></div>
         </div>
 
-        <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 mb-6">
+        <form onSubmit={handleCreateLink}>
+          <label htmlFor="profile-name" className="field-label">What should we call you?</label>
           <input
+            id="profile-name"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            className="premium-input mb-4"
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Your first name or nickname"
+            className="text-field"
+            maxLength={60}
+            autoComplete="given-name"
+            required
           />
+          <p className="field-hint">This name appears on your public message page.</p>
 
-          <div className="mb-6">
-            <TermsAndPrivacy onAccept={setTermsAccepted} />
-          </div>
+          <div className="terms-wrap"><TermsAndPrivacy onAccept={setTermsAccepted} /></div>
 
-          <button
-            className={`premium-btn premium-btn-primary w-full flex items-center justify-center ${
-              !termsAccepted ? 'opacity-75 cursor-not-allowed' : ''
-            }`}
-            onClick={handleCreateLink}
-            disabled={loading || !termsAccepted}
-          >
-            {loading ? (
-              <FiLoader className="animate-spin mr-2" />
-            ) : (
-              <FiLink className="mr-2" />
-            )}
-            {loading ? "Generating..." : "Generate Link"}
+          {error && <div className="form-error" role="alert">{error}</div>}
+          <button type="submit" className="button button-primary button-full" disabled={loading || !name.trim() || !termsAccepted}>
+            {loading ? <LoaderCircle className="spin" size={18} /> : <Link2 size={18} />}
+            {loading ? "Making your link…" : "Create my link"}
           </button>
-        </div>
+          <p className="form-footnote"><span className="tiny-lock" /> You can start receiving messages as soon as you share it.</p>
+        </form>
 
         {link && (
-          <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Your Secret Message Link</h3>
-              <button
-                onClick={handleCopyLink}
-                className="premium-btn premium-btn-outline text-sm"
-              >
-                {copied ? (
-                  <>
-                    <FiCheckCircle className="mr-2" /> Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-2" /> Copy Link
-                  </>
-                )}
+          <div className="link-result" aria-live="polite">
+            <div className="result-success"><span className="success-icon"><Check size={16} /></span><div><strong>Your link is ready, {name.trim()}!</strong><span>Share it with the people you trust.</span></div></div>
+            <div className="copy-row">
+              <a className="generated-link" href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+              <button type="button" className="copy-button" onClick={handleCopyLink} aria-label={copied ? "Link copied" : "Copy your link"}>
+                {copied ? <Check size={17} /> : <Copy size={17} />}
               </button>
             </div>
-            
-            <div className="bg-gray-50 p-3 rounded-lg mb-4 break-all">
-              <p className="text-sm text-gray-600">{link}</p>
-            </div>
-            
-            <button
-              onClick={() => setShowShareOptions(!showShareOptions)}
-              className="premium-btn premium-btn-secondary w-full flex items-center justify-center"
-            >
-              <Share2 className="mr-2" /> Share Link
+            <button type="button" className="button button-dark button-full" onClick={() => setShowShareOptions((visible) => !visible)}>
+              <Share2 size={17} /> {showShareOptions ? "Close sharing options" : "Share your link"}
             </button>
-            
             {showShareOptions && (
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => handleShare('facebook')}
-                  className="premium-btn premium-btn-outline flex items-center justify-center"
-                >
-                  <Facebook className="mr-2" /> Facebook
-                </button>
-                <button
-                  onClick={() => handleShare('twitter')}
-                  className="premium-btn premium-btn-outline flex items-center justify-center"
-                >
-                  <Twitter className="mr-2" /> Twitter
-                </button>
-                <button
-                  onClick={() => handleShare('Whatsapp')}
-                  className="premium-btn premium-btn-outline flex items-center justify-center"
-                >
-                  <FaWhatsapp className="mr-2" /> WhatsApp
-                </button>
-                <button
-                  onClick={() => handleShare('email')}
-                  className="premium-btn premium-btn-outline flex items-center justify-center"
-                >
-                  <Mail className="mr-2" /> Email
-                </button>
+              <div className="share-options">
+                <button type="button" onClick={() => handleShare("facebook")}><span className="social-mark social-facebook">f</span>Facebook</button>
+                <button type="button" onClick={() => handleShare("twitter")}><span className="social-mark social-x">𝕏</span>Twitter / X</button>
+                <button type="button" onClick={() => handleShare("whatsapp")}><span className="social-mark social-whatsapp">wa</span>WhatsApp</button>
+                <button type="button" onClick={() => handleShare("email")}><Mail size={16} />Email</button>
               </div>
             )}
+            {copied && <p className="copy-confirm"><Check size={14} /> Copied to clipboard</p>}
           </div>
         )}
 
-        <button
-          className="premium-btn premium-btn-secondary w-full max-w-md flex items-center justify-center"
-          onClick={handleViewMessages}
-        >
-          <FiMessageSquare className="mr-2" /> View My Messages
-        </button>
-      </div>
-
-      <footer className="w-full py-4 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p> */}
+        <div className="panel-bottom">
+          <span>Already have an inbox?</span>
+          <button type="button" onClick={handleViewMessages}>Open your messages <MessageCircle size={15} /></button>
         </div>
-      </footer>
+      </section>
     </div>
   );
 };

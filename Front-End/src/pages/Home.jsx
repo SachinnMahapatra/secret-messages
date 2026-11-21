@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiLink, FiEye, FiShare2, FiPlus } from 'react-icons/fi';
+import { ArrowUpRight, Eye, Link2, LockKeyhole, MessageCircle, Plus, Share2, Sparkles } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -8,99 +8,102 @@ const Home = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Check if userId exists in localStorage
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
+    setUserId(localStorage.getItem("userId"));
   }, []);
 
-  // Function to handle sharing an existing link
-  const handleShareLink = () => {
+  const handleShareLink = async () => {
+    if (!userId) return;
+    const name = localStorage.getItem("userName") || "me";
     const linkToShare = `${window.location.origin}/secret/${userId}?name=${encodeURIComponent(name)}`;
-    
-    // Check if the Web Share API is available
+
     if (navigator.share) {
-      navigator.share({
-        title: 'Send me a secret message',
-        text: 'Send me an anonymous message!',
-        url: linkToShare,
-      })
-      .catch((error) => console.log('Error sharing:', error));
-    } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(linkToShare)
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        })
-        .catch((err) => console.error('Failed to copy link: ', err));
+      try {
+        await navigator.share({
+          title: "Send me a secret message",
+          text: "Leave me an anonymous note on MystMessage.",
+          url: linkToShare,
+        });
+      } catch {
+        // Closing the native share sheet is an expected action.
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(linkToShare);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2200);
+    } catch {
+      setCopied(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl text-center px-4 py-12 md:py-16">
-        <div className="mb-10">
-          <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6">
-            <FiLink className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="premium-title text-3xl md:text-4xl lg:text-5xl mb-4">
-            Welcome to Secret Message
-          </h1>
-          <p className="text-gray-600 text-sm md:text-lg max-w-md mx-auto mb-10">
-            Create your unique secret message link and share it anonymously with
-            friends!
-          </p>
-        </div>
+    <div className="home-page">
+      <section className="home-hero page-container">
+        <div className="hero-copy">
+          <div className="eyebrow"><span className="eyebrow-spark"><Sparkles size={13} /></span> A little mystery goes a long way</div>
+          <h1>Say what you mean.<br /><em>Keep your name out of it.</em></h1>
+          <p className="hero-description">Give your friends a place to be completely honest. Make one link, share it anywhere, and read the notes that come back.</p>
 
-        <div className={`flex flex-col space-y-3 md:space-y-4 w-full max-w-md ${userId ? 'mb-8' : ''}`}>
-          {!userId ? (
-            <button
-              className="premium-btn premium-btn-primary flex items-center justify-center"
-              onClick={() => navigate("/create-link")}
-            >
-              <FiLink className="mr-2" /> Create Your Link
+          <div className="hero-actions">
+            <button type="button" className="button button-primary" onClick={() => navigate("/create-link")}>
+              {userId ? <><Plus size={18} /> Create a new link</> : <><Link2 size={18} /> Create your link</>}
             </button>
-          ) : (
-            <>
-              <button
-                className="premium-btn premium-btn-primary flex items-center justify-center"
-                onClick={() => navigate("/create-link")}
-              >
-                <FiPlus className="mr-2" /> Create New Link
-              </button>
+            {userId ? (
+              <>
+                <button type="button" className="button button-light" onClick={handleShareLink}>
+                  <Share2 size={17} /> {copied ? "Link copied" : "Share my link"}
+                </button>
+                <button type="button" className="button button-quiet" onClick={() => navigate(`/messages/${userId}`)}>
+                  <Eye size={17} /> View inbox
+                </button>
+              </>
+            ) : (
+              <span className="hero-microcopy"><LockKeyhole size={14} /> No account needed</span>
+            )}
+          </div>
+          {userId && <p className="share-hint" aria-live="polite">{copied ? "Your link is ready to paste." : "Your inbox is saved on this device."}</p>}
 
-              <button
-                className="premium-btn premium-btn-outline flex items-center justify-center relative"
-                onClick={handleShareLink}
-              >
-                <FiShare2 className="mr-2" /> 
-                {copied ? 'Link Copied!' : 'Share Existing Link'}
-                
-                {copied && (
-                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs py-1 px-2 rounded animate-fade-in">
-                    Copied!
-                  </span>
-                )}
-              </button>
-
-              <button
-                className="premium-btn premium-btn-secondary flex items-center justify-center"
-                onClick={() => navigate(`/messages/${userId}`)}
-              >
-                <FiEye className="mr-2" /> View Messages
-              </button>
-            </>
-          )}
+          <div className="hero-trust-row">
+            <div className="avatar-stack" aria-hidden="true"><span>J</span><span>M</span><span>A</span><span>+</span></div>
+            <p><strong>A better way to say it</strong><br />Anonymous notes, without the awkward intro.</p>
+          </div>
         </div>
-      </div>
 
-      <footer className="w-full py-4 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <p>© {new Date().getFullYear()} Secret Message. All rights reserved.</p> */}
+        <div className="hero-visual" aria-label="Example anonymous message card">
+          <div className="visual-orbit orbit-one" />
+          <div className="visual-orbit orbit-two" />
+          <div className="floating-label label-top"><span className="label-icon"><LockKeyhole size={14} /></span> Private by design</div>
+          <article className="note-card">
+            <div className="note-card-top"><span className="note-avatar">J</span><span>ANONYMOUS NOTE</span><span className="note-dots">•••</span></div>
+            <p className="note-text">“You make the room feel lighter. I hope someone tells you that today.”</p>
+            <div className="note-card-bottom"><span>just now</span><span className="note-heart">♥</span></div>
+          </article>
+          <div className="floating-label label-bottom"><MessageCircle size={15} /> A note from someone who cares</div>
+          <span className="visual-star star-one">✳</span>
+          <span className="visual-star star-two">✦</span>
         </div>
-      </footer>
+      </section>
+
+      <section className="how-section">
+        <div className="page-container">
+          <div className="section-heading">
+            <span className="section-kicker">THREE LITTLE STEPS</span>
+            <h2>Make room for honesty.</h2>
+            <p>It takes less time than writing a text.</p>
+          </div>
+          <div className="steps-grid">
+            <article className="step-card"><span className="step-icon step-purple"><Link2 size={19} /></span><span className="step-number">01</span><h3>Make your link</h3><p>Choose a name and create your own anonymous message page.</p></article>
+            <article className="step-card"><span className="step-icon step-yellow"><Share2 size={19} /></span><span className="step-number">02</span><h3>Pass it around</h3><p>Share your link with friends, in your bio, or wherever you like.</p></article>
+            <article className="step-card"><span className="step-icon step-green"><MessageCircle size={19} /></span><span className="step-number">03</span><h3>Read what comes in</h3><p>Open your inbox to find the messages people leave for you.</p></article>
+          </div>
+          <div className="home-bottom-cta">
+            <div><span className="section-kicker">READY WHEN YOU ARE</span><h2>Your link is one small step away.</h2></div>
+            <button type="button" className="button button-dark" onClick={() => navigate("/create-link")}>Get started <ArrowUpRight size={17} /></button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

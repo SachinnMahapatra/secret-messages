@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import { FiSend, FiMail, FiCheck, FiArrowLeft, FiEye } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Check, Eye, LockKeyhole, Send, Sparkles } from "lucide-react";
 
 const SecretMessage = () => {
   const { id } = useParams();
@@ -10,166 +10,94 @@ const SecretMessage = () => {
   const [message, setMessage] = useState("");
   const [isSent, setIsSent] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [hasGeneratedLink, setHasGeneratedLink] = useState(false);
 
-  // Check if the user is the owner
   useEffect(() => {
     const storedKey = localStorage.getItem("authKey");
-    const requiredKey = `auth-${id}`;
-    
-    // Check if user has already generated the link
-    const generated = localStorage.getItem(`generated-${id}`);
-    setHasGeneratedLink(!!generated);
-
-    if (storedKey === requiredKey) {
-      navigate(`/messages/${id}`);
-    }
+    setHasGeneratedLink(!!localStorage.getItem(`generated-${id}`));
+    if (storedKey === `auth-${id}`) navigate(`/messages/${id}`, { replace: true });
   }, [id, navigate]);
 
-  const handleSendMessage = async () => {
-    if (!message.trim()) return;
-    
-    setIsSending(true);
-    setError(null);
+  const handleSendMessage = async (event) => {
+    event.preventDefault();
+    if (!message.trim() || isSending) return;
 
+    setIsSending(true);
+    setError("");
     try {
       const response = await fetch("https://mystmessage.onrender.com/api/message/send", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: id,
-          content: message,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: id, content: message.trim() }),
       });
-
       const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "We couldn't send your note. Please try again.");
 
-      if (data.success) {
-        setIsSent(true);
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
-      } else {
-        setError(data.error || "Failed to send message");
-        setIsSending(false);
-      }
-    } catch (err) {
-      setError("An error occurred while sending the message");
+      setIsSent(true);
+      window.setTimeout(() => navigate("/"), 4000);
+    } catch (requestError) {
+      setError(requestError.message || "Something went wrong while sending your note.");
       setIsSending(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-6">
-      <div className="w-full max-w-xl">
-        {isSent ? (
-          <div className="premium-card p-8 text-center animate-fade-in">
-            <div className="success-checkmark mb-6">
-              <div className="check-icon">
-                <span className="icon-line line-tip"></span>
-                <span className="icon-line line-long"></span>
-              </div>
+    <div className="standalone-page send-page">
+      <Link to="/" className="standalone-brand">
+        <span className="brand-mark" aria-hidden="true">m</span><span className="brand-name">Myst<span>Message</span></span>
+      </Link>
+
+      <div className="send-layout">
+        <div className="send-intro">
+          <div className="eyebrow"><span className="eyebrow-spark"><Sparkles size={13} /></span> A NOTE WITHOUT A NAME</div>
+          <h1>Say the thing<br /><em>you really mean.</em></h1>
+          <p>Leave a kind thought, a little truth, or just something they should hear today.</p>
+          <div className="anonymous-stamp"><LockKeyhole size={16} /><span>Your message is sent anonymously</span></div>
+        </div>
+
+        <section className="send-card" aria-labelledby="send-heading">
+          {isSent ? (
+            <div className="sent-state" role="status">
+              <span className="sent-check"><Check size={27} /></span>
+              <span className="panel-step">NOTE DELIVERED</span>
+              <h2>That’s one less thing left unsaid.</h2>
+              <p>Your message has been sent anonymously. You’ll be taken back in a moment.</p>
+              <button type="button" className="button button-light" onClick={() => navigate("/")}>Back to MystMessage</button>
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-green-600 mb-3">Message Sent Successfully!</h2>
-            <p className="text-sm md:text-base text-gray-600 mb-6">Your secret message has been delivered. Redirecting to home page...</p>
-            <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-green-500 h-full rounded-full animate-pulse" style={{ width: '100%' }}></div>
-            </div>
-          </div>
-        ) : (
-          <div className="premium-card p-6 md:p-8">
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center mr-3">
-                <FiMail className="w-5 h-5 text-white" />
-              </div>
-              <h2 className="premium-title text-xl md:text-3xl">
-                Send a Secret Message
-              </h2>
-            </div>
-            
-            <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-              <p className="text-sm md:text-base text-indigo-800">
-                <span className="font-semibold">To:</span> {name || "User"}
-              </p>
-            </div>
-            
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-500 flex items-start">
-                <span className="mr-2 mt-0.5">⚠️</span>
-                <p>{error}</p>
-              </div>
-            )}
-            
-            <div className="mb-6">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your secret message here..."
-                className="premium-input"
-                rows="5"
-                disabled={isSending}
-              ></textarea>
-              <p className="mt-2 text-xs text-gray-500">
-                This message will be sent anonymously. The recipient won't know who sent it.
-              </p>
-            </div>
-            
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-              <button
-                className={`premium-btn premium-btn-primary flex-1 ${
-                  isSending ? 'opacity-75 cursor-not-allowed' : ''
-                }`}
-                onClick={handleSendMessage}
-                disabled={isSending || !message.trim()}
-              >
-                {isSending ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending...
-                  </div>
-                ) : (
-                  <>
-                    <FiSend className="mr-2" /> Send Message
-                  </>
-                )}
-              </button>
-              
-              <button
-                className="premium-btn premium-btn-outline"
-                onClick={() => navigate('/')}
-              >
-                <FiArrowLeft className="mr-2" /> Back to Home
-              </button>
-              
-              {hasGeneratedLink && (
-                <button
-                  className="premium-btn premium-btn-secondary mt-3 md:mt-0"
-                  onClick={() => navigate(`/messages/${id}`)}
-                >
-                  <FiEye className="mr-2" /> View Messages
+          ) : (
+            <>
+              <div className="send-card-top"><span className="note-avatar">{(name || "?").slice(0, 1).toUpperCase()}</span><div><span className="panel-step">A MESSAGE FOR</span><h2 id="send-heading">{name || "Someone special"}</h2></div><span className="anonymous-pill"><LockKeyhole size={13} /> Anonymous</span></div>
+              {error && <div className="form-error" role="alert">{error}</div>}
+              <form onSubmit={handleSendMessage}>
+                <label htmlFor="secret-note" className="field-label">Your note</label>
+                <textarea
+                  id="secret-note"
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  placeholder="Type it here. No name needed…"
+                  className="text-field message-textarea"
+                  rows={7}
+                  disabled={isSending}
+                  required
+                />
+                <p className="field-hint">Your identity isn’t attached to the message.</p>
+                <button type="submit" className="button button-primary button-full send-submit" disabled={isSending || !message.trim()}>
+                  {isSending ? <span className="spin-icon" /> : <Send size={17} />}
+                  {isSending ? "Sending your note…" : "Send anonymously"}
                 </button>
-              )}
-            </div>
-          </div>
-        )}
+              </form>
+              <div className="send-card-foot">
+                <button type="button" className="back-button" onClick={() => navigate(-1)}><ArrowLeft size={15} /> Go back</button>
+                {hasGeneratedLink && <button type="button" className="back-button" onClick={() => navigate(`/messages/${id}`)}>View inbox <Eye size={15} /></button>}
+              </div>
+            </>
+          )}
+        </section>
       </div>
+      <p className="standalone-footer"><LockKeyhole size={13} /> Keep it kind. Keep it honest.</p>
     </div>
   );
 };
 
 export default SecretMessage;
-
-// Add this to your global CSS or index.css
-// @keyframes fadeIn {
-//   from { opacity: 0; transform: translateY(-10px); }
-//   to { opacity: 1; transform: translateY(0); }
-// }
-// .animate-fade-in {
-//   animation: fadeIn 0.5s ease-out forwards;
-// }
