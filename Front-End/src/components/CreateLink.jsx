@@ -82,6 +82,8 @@ const CreateLink = () => {
     if (storedUserId) navigate(`/messages/${storedUserId}`);
   };
 
+  const linkPreview = link ? `${window.location.host}/secret/••••••` : "";
+
   return (
     <div className="create-page page-container">
       <section className="create-intro">
@@ -131,7 +133,9 @@ const CreateLink = () => {
           <div className="link-result" aria-live="polite">
             <div className="result-success"><span className="success-icon"><Check size={16} /></span><div><strong>Your link is ready, {name.trim()}!</strong><span>Share it with the people you trust.</span></div></div>
             <div className="copy-row">
-              <a className="generated-link" href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+              <button type="button" className="generated-link" onClick={handleCopyLink} aria-label="Copy your full secret message link">
+                {copied ? "Copied to clipboard" : linkPreview}
+              </button>
               <button type="button" className="copy-button" onClick={handleCopyLink} aria-label={copied ? "Link copied" : "Copy your link"}>
                 {copied ? <Check size={17} /> : <Copy size={17} />}
               </button>

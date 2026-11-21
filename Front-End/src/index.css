@@ -159,14 +159,16 @@ a { color: inherit; }
 .form-footnote { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 12px 0 0; color: #9a96a1; font-size: 10px; }
 .tiny-lock { width: 7px; height: 8px; position: relative; display: inline-block; border: 1px solid #9994a2; border-radius: 2px; }
 .tiny-lock::before { content: ""; position: absolute; width: 4px; height: 4px; left: 0; top: -5px; border: 1px solid #9994a2; border-bottom: 0; border-radius: 4px 4px 0 0; }
-.link-result { margin-top: 24px; padding-top: 22px; border-top: 1px solid #efeced; }
-.result-success { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.link-result { width: 100%; min-width: 0; margin-top: 24px; padding-top: 22px; border-top: 1px solid #efeced; }
+.result-success { display: flex; min-width: 0; align-items: center; gap: 10px; margin-bottom: 14px; }
+.result-success > div { min-width: 0; overflow-wrap: anywhere; }
 .success-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: #e6f0df; color: #4d7954; }
 .result-success strong, .result-success span:not(.success-icon) { display: block; }
 .result-success strong { color: #454157; font-size: 13px; }
 .result-success div span { margin-top: 2px; color: #8a8794; font-size: 11px; }
-.copy-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; padding: 8px 9px 8px 12px; border: 1px solid #e8e3ee; border-radius: 11px; background: #f8f6fb; }
-.generated-link { flex: 1; overflow: hidden; color: #77718c; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.copy-row { display: flex; width: 100%; min-width: 0; gap: 8px; align-items: center; margin-bottom: 12px; padding: 8px 9px 8px 12px; border: 1px solid #e8e3ee; border-radius: 11px; background: #f8f6fb; }
+.generated-link { display: block; flex: 1 1 0; width: 0; min-width: 0; overflow: hidden; padding: 8px 0; border: 0; background: transparent; color: #77718c; font-size: 11px; font-weight: 600; text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.generated-link:hover { color: var(--purple); }
 .copy-button { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border: 0; border-radius: 9px; background: #ebe5f5; color: var(--purple); cursor: pointer; }
 .copy-button:hover { background: #ddd3ee; }
 .share-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
